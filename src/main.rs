@@ -5,6 +5,7 @@ use std::env;
 use dotenv;
 mod templates {
   pub mod router;
+  pub mod home;
 }
 
 fn main() {
@@ -28,7 +29,7 @@ fn main() {
     let router_file_path = dir.join(format!("{}Router.js", module_name));
 
     let router_file_content = templates::router::get_router_file_content(module_name);
-    
+
     fs::write(&router_file_path, router_file_content).expect("Error when writing file");
 
     println!("File created: {:?}", router_file_path);
@@ -62,28 +63,7 @@ fn main() {
     println!("File created: {:?}", home_index_file_path);
 
     let home_file_path = home_dir.join(format!("{}Home.js", module_name));
-    let home_file_content = format!(r#"import React, {{ useEffect }} from "react";
-import {{ useDefaultQueryParams }} from "utils";
-import {{ useBreadcrumb }} from "providers/fund-manager/BreadcrumbProvider";
-
-const {}Home = () => {{
-  const {{
-    actions: {{ updateBreadcrumb }},
-  }} = useBreadcrumb();
-
-  const defaultParams = {{}};
-
-  useDefaultQueryParams(defaultParams, () => {{}}, []);
-
-  useEffect(() => {{
-    updateBreadcrumb();
-  }}, []);
-
-  return <div>{} Home</div>;
-}};
-
-export default {}Home;
-"#, module_name, module_name, module_name);
+    let home_file_content = templates::home::get_home_file_content(module_name);
     fs::write(&home_file_path, home_file_content).expect("Error when writing file");
     println!("File created: {:?}", home_file_path);
 }
