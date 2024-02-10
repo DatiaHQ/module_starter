@@ -3,9 +3,9 @@ use std::io::{stdin, stdout, Write};
 use std::path::Path;
 use std::env;
 use dotenv;
-use heck::ShoutySnakeCase;
-use heck::KebabCase;
-use heck::TitleCase;
+mod templates {
+  pub mod router;
+}
 
 fn main() {
     dotenv::from_filename(".env").ok();
@@ -19,49 +19,18 @@ fn main() {
     let module_name = module_name.trim();
 
     let dir = Path::new(&core_repo_path).join("src").join("views").join("fund-manager").join(module_name);
+
     if !dir.exists() {
         fs::create_dir_all(&dir).expect("Error when creating directory");
         println!("Directory created: {:?}", dir);
     }
 
-		let module_name_upper_snake = module_name.to_shouty_snake_case();
-
-    let module_name_kebab = module_name.to_kebab_case();
-
-    let module_name_sentence = module_name.to_title_case().replace("_", " ");
-
     let router_file_path = dir.join(format!("{}Router.js", module_name));
-    let router_file_content = format!(r#"import React from "react";
-import {{ Route, Switch, Redirect }} from "react-router-dom";
-import {{ FUND_MANAGER_FUND_{}_ROUTE }} from "routes";
-import {{ useFund }} from "providers/fund-manager/FundProvider";
-import {{ PageTitle }} from "components";
-import {{ {}Provider }} from "providers/fund-manager/{}";
-import {{ {}Home }} from "./views";
-import {}PrivateRoute from "./{}PrivateRoute";
 
-const {}Router = () => {{
-  const {{ data: {{ currentFund: fund }} = {{}} }} = useFund();
-  return (
-    <{}PrivateRoute>
-      <PageTitle title={{`${{fund.name}} {}`}} />
-      <{}Provider>
-        <Switch>
-          <Route
-            render={{() => <{}Home />}}
-            exact
-            path={{FUND_MANAGER_FUND_{}_ROUTE}}
-          />
-          <Redirect to={{FUND_MANAGER_FUND_{}_ROUTE}} />
-        </Switch>
-      </{}Provider>
-    </{}PrivateRoute>
-  );
-}};
-
-export default {}Router;
-"#, module_name_upper_snake, module_name, module_name_kebab, module_name, module_name, module_name, module_name, module_name, module_name_sentence, module_name, module_name, module_name_upper_snake, module_name_upper_snake, module_name, module_name, module_name);
+    let router_file_content = templates::router::get_router_file_content(module_name);
+    
     fs::write(&router_file_path, router_file_content).expect("Error when writing file");
+
     println!("File created: {:?}", router_file_path);
 
     let private_route_file_path = dir.join(format!("{}PrivateRoute.js", module_name));
