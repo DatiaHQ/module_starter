@@ -1,25 +1,10 @@
+use std::fs;
 
 pub fn get_home_file_content(module_name: &str) -> String {
-  format!(r#"import React, {{ useEffect }} from "react";
-import {{ useDefaultQueryParams }} from "utils";
-import {{ useBreadcrumb }} from "providers/fund-manager/BreadcrumbProvider";
+  let template = fs::read_to_string("home_template.txt")
+      .expect("Could not read template file");
 
-const {}Home = () => {{
-  const {{
-    actions: {{ updateBreadcrumb }},
-  }} = useBreadcrumb();
+  let replaced = template.replace("{}", module_name);
 
-  const defaultParams = {{}};
-
-  useDefaultQueryParams(defaultParams, () => {{}}, []);
-
-  useEffect(() => {{
-    updateBreadcrumb();
-  }}, []);
-
-  return <div>{} Home</div>;
-}};
-
-export default {}Home;
-"#, module_name, module_name, module_name)
+  replaced
 }
