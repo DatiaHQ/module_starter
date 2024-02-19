@@ -4,7 +4,8 @@ At Datia we have to continuously generate new modules/frameworks to improve our 
 
 ## Requirements
 - You need to have Rust and Cargo installed in your system.
-- Clone this repository and add the path where you have located our UI Repository by this `CORE_REPO_PATH={YOUR_UI_REPO_PATH}`
+- Copy and complete values for env vars:
+```cp .env.example .env```
 
 ## Usage
 
