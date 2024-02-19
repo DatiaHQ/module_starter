@@ -6,14 +6,26 @@ mod templates {
 }
 mod utils;
 
-use utils::{get_module_name, create_directory, create_router_file, create_private_route_file, create_sub_directory, create_file, create_home_file};
+use utils::{create_directory, create_router_file, create_private_route_file, create_sub_directory, create_file, create_home_file};
+
+use clap::{App, Arg};
+
 
 fn main() {
   dotenv::from_filename(".env").ok();
 
   let core_repo_path = env::var("CORE_REPO_PATH").expect("CORE_REPO_PATH is not defined");
 
-  let module_name = get_module_name();
+  let matches = App::new("module_starter")
+    .arg(
+      Arg::with_name("module_name")
+        .help("The name of the module")
+        .required(true)
+        .index(1),
+    )
+    .get_matches();
+
+  let module_name = matches.value_of("module_name").unwrap();
 
   let dir = create_directory(&core_repo_path, &module_name);
 

@@ -1,16 +1,7 @@
 use std::fs;
-use std::io::{stdin, stdout, Write};
 use std::path::{Path, PathBuf};
 use crate::templates::router;
 use crate::templates::home;
-
-pub fn get_module_name() -> String {
-  let mut module_name = String::new();
-  print!("Type the module name (e.g: TemperatureScore): ");
-  let _= stdout().flush();
-  stdin().read_line(&mut module_name).expect("Error when reading the line");
-  module_name.trim().to_string()
-}
 
 pub fn create_directory(core_repo_path: &str, module_name: &str) -> PathBuf {
   let dir = Path::new(core_repo_path).join("src").join("views").join("fund-manager").join(module_name);
