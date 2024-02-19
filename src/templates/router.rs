@@ -1,4 +1,3 @@
-use std::fs;
 use heck::{ShoutySnakeCase, KebabCase, TitleCase};
 
 pub fn get_router_file_content(module_name: &str) -> String {
@@ -6,8 +5,7 @@ pub fn get_router_file_content(module_name: &str) -> String {
   let module_name_kebab = module_name.to_kebab_case();
   let module_name_sentence = module_name.to_title_case().replace("_", " ");
 
-  let template = fs::read_to_string("router_template.txt")
-    .expect("Could not read template file");
+  let template = include_str!("router_template.txt");
 
   let replaced = template
     .replace("{module_name_upper_snake}", &module_name_upper_snake)
