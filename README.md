@@ -11,6 +11,6 @@ At Datia we have to continuously generate new modules/frameworks to improve our 
 To use this tool, you only need to provide the name of the module you want to generate. For example, if you want to generate a module called "EU Taxonomy", you can do so as follows:
 
 ```bash
-cargo run
+cargo run EUTaxonomy
 ```
-After you execute the above command, you will be asked to write the module name, in this case, you should enter: "EUTaxonomy", if you want to add a new module called "Temperature Score", you should enter: "TemperatureScore" and so on. That's all! You will get your new module automatically added to the app, including a routing system with URL params, provider and components.
+That's all! You will get your new module automatically added to the app, including a routing system with URL params, provider and components.
