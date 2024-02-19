@@ -1,69 +1,44 @@
-use std::fs;
-use std::io::{stdin, stdout, Write};
-use std::path::Path;
 use std::env;
 use dotenv;
 mod templates {
   pub mod router;
   pub mod home;
 }
+mod utils;
+
+use utils::{create_directory, create_router_file, create_private_route_file, create_sub_directory, create_file, create_home_file};
+
+use clap::{App, Arg};
+
 
 fn main() {
-    dotenv::from_filename(".env").ok();
+  dotenv::from_filename(".env").ok();
 
-    let core_repo_path = env::var("CORE_REPO_PATH").expect("CORE_REPO_PATH is not defined");
+  let core_repo_path = env::var("CORE_REPO_PATH").expect("CORE_REPO_PATH is not defined");
 
-    let mut module_name = String::new();
-    print!("Type the module name (e.g: TemperatureScore): ");
-    let _= stdout().flush();
-    stdin().read_line(&mut module_name).expect("Error when reading the line");
-    let module_name = module_name.trim();
+  let matches = App::new("module_starter")
+    .arg(
+      Arg::with_name("module_name")
+        .help("The name of the module")
+        .required(true)
+        .index(1),
+    )
+    .get_matches();
 
-    let dir = Path::new(&core_repo_path).join("src").join("views").join("fund-manager").join(module_name);
+  let module_name = matches.value_of("module_name").unwrap();
 
-    if !dir.exists() {
-        fs::create_dir_all(&dir).expect("Error when creating directory");
-        println!("Directory created: {:?}", dir);
-    }
+  let dir = create_directory(&core_repo_path, &module_name);
 
-    let router_file_path = dir.join(format!("{}Router.js", module_name));
+  create_router_file(&dir, &module_name);
+  create_private_route_file(&dir, &module_name);
 
-    let router_file_content = templates::router::get_router_file_content(module_name);
+  let components_dir = create_sub_directory(&dir, "components");
+  create_file(&components_dir, "index.js", "");
 
-    fs::write(&router_file_path, router_file_content).expect("Error when writing file");
+  let views_dir = create_sub_directory(&dir, "views");
+  create_file(&views_dir, "index.js", &format!("export {{ default as {}Home }} from \"./{}Home\";\n", module_name, module_name));
 
-    println!("File created: {:?}", router_file_path);
-
-    let private_route_file_path = dir.join(format!("{}PrivateRoute.js", module_name));
-    fs::write(&private_route_file_path, "console.log('PrivateRoute created!');\n").expect("Error when writing file");
-    println!("File created: {:?}", private_route_file_path);
-
-    let components_dir = dir.join("components");
-    fs::create_dir_all(&components_dir).expect("Error when creating directory");
-    println!("Directory created: {:?}", components_dir);
-
-    let components_index_file_path = components_dir.join("index.js");
-    fs::write(&components_index_file_path, "").expect("Error when writing file");
-    println!("File created: {:?}", components_index_file_path);
-
-    let views_dir = dir.join("views");
-    fs::create_dir_all(&views_dir).expect("Error when creating directory");
-    println!("Directory created: {:?}", views_dir);
-
-    let views_index_file_path = views_dir.join("index.js");
-    fs::write(&views_index_file_path, format!("export {{ default as {}Home }} from \"./{}Home\";\n", module_name, module_name)).expect("Error when writing file");
-    println!("File created: {:?}", views_index_file_path);
-
-    let home_dir = views_dir.join(format!("{}Home", module_name));
-    fs::create_dir_all(&home_dir).expect("Error when creating directory");
-    println!("Directory created: {:?}", home_dir);
-
-    let home_index_file_path = home_dir.join("index.js");
-    fs::write(&home_index_file_path, format!("export {{ default }} from \"./{}Home\";\n", module_name)).expect("Error when writing file");
-    println!("File created: {:?}", home_index_file_path);
-
-    let home_file_path = home_dir.join(format!("{}Home.js", module_name));
-    let home_file_content = templates::home::get_home_file_content(module_name);
-    fs::write(&home_file_path, home_file_content).expect("Error when writing file");
-    println!("File created: {:?}", home_file_path);
+  let home_dir = create_sub_directory(&views_dir, &format!("{}Home", module_name));
+  create_file(&home_dir, "index.js", &format!("export {{ default }} from \"./{}Home\";\n", module_name));
+  create_home_file(&home_dir, &module_name);
 }

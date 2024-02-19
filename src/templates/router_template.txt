@@ -1,0 +1,29 @@
+import React from "react";
+import { Route, Switch, Redirect } from "react-router-dom";
+import { FUND_MANAGER_FUND_{module_name_upper_snake}_ROUTE } from "routes";
+import { useFund } from "providers/fund-manager/FundProvider";
+import { PageTitle } from "components";
+import { {module_name}Provider } from "providers/fund-manager/{module_name_kebab}";
+import { {module_name}Home } from "./views";
+import {module_name}PrivateRoute from "./{module_name}PrivateRoute";
+
+const {module_name}Router = () => {
+  const { data: { currentFund: fund } = {} } = useFund();
+  return (
+    <{module_name}PrivateRoute>
+      <PageTitle title={`${fund.name} {module_name_sentence}`} />
+      <{module_name}Provider>
+        <Switch>
+          <Route
+            render={() => <{module_name}Home />}
+            exact
+            path={{FUND_MANAGER_FUND_{module_name_upper_snake}_ROUTE}}
+          />
+          <Redirect to={{FUND_MANAGER_FUND_{module_name_upper_snake}_ROUTE}} />
+        </Switch>
+      </{module_name}Provider>
+    </{module_name}PrivateRoute>
+  );
+};
+
+export default {module_name}Router;

@@ -1,0 +1,29 @@
+import React, { useEffect } from "react";
+import { useDefaultQueryParams } from "utils";
+import { useBreadcrumb } from "providers/fund-manager/BreadcrumbProvider";
+
+const {}Home = () => {
+  const {
+    actions: { updateBreadcrumb },
+  } = useBreadcrumb();
+
+  const defaultParams = {
+    // module default params
+  };
+
+  useDefaultQueryParams(
+    defaultParams,
+    () => {
+      // module callback
+    },
+    []
+  );
+
+  useEffect(() => {
+    updateBreadcrumb();
+  }, []);
+
+  return <div>{} Home</div>;
+};
+
+export default {}Home;
