@@ -1,6 +1,3 @@
-use std::fs;
-use std::io::{stdin, stdout, Write};
-use std::path::{Path, PathBuf};
 use std::env;
 use dotenv;
 mod templates {
